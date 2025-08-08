@@ -1,0 +1,58 @@
+Derivatives of Activation Functions
+
+| Activation     | Function                                       | Derivative                            | Notes                                             
+| -------------- | ---------------------------------------------- | --------------------------------------| -------------------------------------------------------- 
+| **Sigmoid**    | sigma(x) = {1}/{1+e^{-x}}                      | sigma'(x) = sigma(x) * (1 -sigma(x))  | Small gradients for large ( x | ) → vanishing gradient |                    
+| **Tanh**       | tanh(x) = {e^x - e^{-x}}/{e^x + e^{-x}}        | tanh'(x) = 1 - tanh^2(x)              | Zero-centered but still vanishes                       |  
+| **ReLU**       | f(x) = max(0, x)                               | f'(x) = 1  x>0  // 0 x≤0              | Fast & avoids vanishing, but dead neurons possible     |   
+| **Leaky ReLU** | f(x) = max(alpha x, x)                         | f'(x) = 1  x>0    //α x≤0             | Fixes dead neuron issue                                |
+
+ 	sigmoid derivative because it’s used heavily in Backpropagation
+
+2. Matrix Notation for Feedforward & Backprop
+---------------------------------------------
+Feedforward (for layer l):
+    Z[l] = W[l] * A[l-1] + b[l]
+    A[l] = g[l](Z[l])
+
+    W[l]: weight matrix of shape (n_l, n_(l-1))
+    b[l]: bias vector of shape (n_l, 1)
+    g[l]: activation function
+    A[0]: input X
+    A[L]: output of final layer
+
+Backpropagation:
+    For output layer:
+        dZ[L] = A[L] - Y  (for MSE or CrossEntropy)
+
+    For hidden layers:
+        dZ[l] = (W[l+1])^T * dZ[l+1] ∘ g'[l](Z[l])
+
+    Weight & bias updates:
+        dW[l] = (1/m) * dZ[l] * (A[l-1])^T
+        db[l] = (1/m) * sum(dZ[l])
+3. Chain Rule in Backpropagation
+--------------------------------
+Chain rule in calculus:
+    dL/dx = (dL/dy) * (dy/dx)
+
+In ANN:
+- Output depends on last layer.
+- Last layer depends on previous layer.
+- Backprop applies chain rule repeatedly from output → input.
+
+Example for one neuron:
+    ∂L/∂w = (∂L/∂a) * (∂a/∂z) * (∂z/∂w)
+    where a = g(z) and z = w*x + b
+
+4. Optimization Methods
+------------------------
+Optimizer   Idea                                             When to Use                      Pros                                 Cons
+SGD         Updates weights for each batch                  Small to medium datasets         Simple, good generalization          Slow convergence
+RMSprop     Scales learning rate by moving avg of grad^2     RNNs, noisy data                 Handles non-stationary objectives    Needs tuning
+Adam        Combines momentum + RMSprop                     Most deep learning tasks         Fast, adaptive, less tuning          More memory use
+
+Key Points:
+- SGD: Good baseline, often with momentum.
+- RMSprop: Popular for sequence models (RNNs, LSTMs).
+- Adam: Default choice for most deep nets; converges fast.
