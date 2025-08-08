@@ -1,0 +1,203 @@
+What is an Artificial Neural Network (ANN)?
+Structure
+Neurons: Small computational units that take inputs, apply weights + bias, pass through an activation function, and produce an output.
+
+Layers:
+
+Input Layer → Takes raw features.
+
+Hidden Layers → Process the data and extract patterns.
+
+Output Layer → Produces predictions (regression value, classification probabilities, etc.).
+
+Connections: Each neuron connects to neurons in the next layer with weights that determine importance.
+
+Biological Inspiration
+Inspired by the brain’s network of neurons.
+
+Just like biological neurons pass electrical signals, ANN neurons pass numerical signals.
+
+
+How Does an ANN Learn?
+Forward Propagation
+
+Data flows from input → hidden layers → output.
+
+Each neuron computes:   z=∑(wi ⋅xi)+b
+  then applies an activation function.
+
+
+Loss Function
+
+Measures how wrong the predictions are.
+Examples: MSE (regression), CrossEntropy (classification).
+
+Backpropagation
+
+Calculates the gradient (sensitivity) of the loss with respect to each weight using the chain rule.
+
+Gradient Descent / Optimizers
+
+Updates weights in the opposite direction of the gradient to minimize loss.
+
+Variants like Adam adapt learning rates automatically.
+
+
+| Function       | Formula / Output Range                        | When to Use                     | Notes                              
+| -------------- | --------------------------------------------- | ----------------------- | ---------------------------------- | 
+| **Sigmoid**    | 1/{1+e^{-x}} → (0, 1)                 | Binary classification output    | Prone to vanishing gradients  |  
+| **Tanh**       | {e^x-e^{-x}}{e^x + e^{-x}} → (-1, 1)  | Centered data; hidden layers    | Still can vanish for large         | 
+| **ReLU**       | max(0, x)                             | Most hidden layers in deep nets | Avoids vanishing gradient; simple  |   
+| **Leaky ReLU** | x if x>0, else αx                     | Hidden layers when ReLU “dies”  | Keeps small gradient for negatives |  
+
+
+
+
+Vanishing Gradient Problem
+
+With sigmoid/tanh, gradients become very small for large |x| → slows or stops learning.
+
+ReLU often preferred because it keeps gradients alive for positive values.
+
+
+
+4. Loss Functions
+
+| Type               | Common Loss              | Used For                       |
+| ------------------ | ------------------------ | ------------------------------ |
+| Regression         | MSE (Mean Squared Error) | Predicting continuous values   |
+| Classification     | CrossEntropy             | Predicting class probabilities |
+
+Good Loss Function Criteria:
+
+Differentiable (for backprop).
+
+Represents your goal metric well.
+
+Penalizes errors appropriately.
+
+
+Hyperparameters
+Learning rate (α) → Step size in gradient descent.
+
+Batch size → Number of samples per update.
+
+Epochs → Full passes through training data.
+
+Number of layers / neurons → Model capacity.
+
+
+Weight initialization:
+
+   Xavier/Glorot → Balanced gradients for sigmoid/tanh.
+
+   He Initialization → Suited for ReLU.
+
+
+
+Overfitting vs. Underfitting
+
+| Problem          | Symptom                                | Fix                                                        |
+| ---------------- | -------------------------------------- | ---------------------------------------------------------- |
+| Overfitting      | High train accuracy, low test accuracy | Regularization (L1/L2), Dropout, Early stopping, More data |
+| Underfitting     | Low train & test accuracy              | Increase model size, Train longer, Better features         |
+
+
+Regularization:
+
+L1 → Encourages sparsity (weights → 0).
+
+L2 → Prevents large weights.
+
+Dropout:
+
+Randomly “turns off” neurons during training to avoid dependency.
+
+Early Stopping:
+
+Stop training when validation loss stops improving.
+
+
+
+
+
+1. What is the difference between ANN, CNN, and RNN? (Conceptual)
+ANN (Artificial Neural Network):
+General-purpose neural network where each neuron is connected to all neurons in the next layer. Works well for tabular or general non-sequential data.
+
+CNN (Convolutional Neural Network):
+Specialized for spatial data (images, videos). Uses convolution layers to detect local patterns (edges, textures) and pooling layers for dimensionality reduction.
+
+RNN (Recurrent Neural Network):
+Designed for sequential data (text, time series). Has loops to retain information from previous steps, enabling temporal context. LSTMs/GRUs solve the long-term memory issue.
+
+2. Why does ReLU work better than sigmoid? (Technical)
+Sigmoid saturates for large positive/negative inputs, leading to vanishing gradients.
+
+ReLU (Rectified Linear Unit): f(x) = max(0, x) doesn’t saturate in the positive region → gradients remain strong → faster convergence.
+
+Also computationally cheaper (just a comparison, no exponentiation).
+
+3. Explain backpropagation in simple terms. (Conceptual)
+Forward pass: Calculate outputs and error (loss).
+
+Backward pass:
+
+Compute how much each weight contributed to the error (gradient via chain rule).
+
+Adjust each weight slightly in the opposite direction of the gradient to reduce error.
+
+Think of it as “blaming” each weight for its share of the error, then “correcting” it.
+
+4. How would you prevent overfitting in a neural network? (Practical)
+Regularization: L1/L2 penalties.
+
+Dropout: Randomly turn off neurons during training.
+
+Data augmentation: Rotate, flip, scale images; add noise to data.
+
+Early stopping: Stop when validation loss stops improving.
+
+Reduce model complexity: Fewer layers/neurons.
+
+Cross-validation to ensure generalization.
+
+5. What happens if the learning rate is too high/low? (Conceptual)
+Too high:
+Overshoots the optimal point, oscillates, or diverges.
+
+Too low:
+Converges very slowly, can get stuck in local minima.
+
+6. How do you choose the number of hidden layers and neurons? (Practical)
+No fixed rule — depends on problem complexity and dataset size.
+
+Start simple: 1–2 hidden layers for small problems; deeper for complex ones.
+
+Increase neurons/layers until validation accuracy stops improving.
+
+Use grid search, random search, or AutoML for tuning.
+
+7. How is MSE different from CrossEntropy? (Conceptual)
+MSE (Mean Squared Error): Measures average squared difference between predicted and actual values. Common for regression.
+
+CrossEntropy: Measures the distance between two probability distributions (true labels vs predicted probabilities). Common for classification.
+
+MSE can work poorly for classification because it penalizes confidence differently and can lead to slower learning.
+
+8. Explain vanishing/exploding gradients. (Advanced Concept)
+Vanishing gradient:
+In deep networks, gradients get very small as they propagate backward → earlier layers learn extremely slowly. Common with sigmoid/tanh activations.
+
+Exploding gradient:
+Gradients grow uncontrollably during backprop → unstable training, weights blow up. Common in RNNs without proper initialization.
+
+Solutions:
+
+Use ReLU (or variants).
+
+Gradient clipping (for exploding).
+
+Proper weight initialization (e.g., Xavier, He).
+
+LSTM/GRU for RNNs.

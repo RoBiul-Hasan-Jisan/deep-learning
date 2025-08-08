@@ -1,0 +1,165 @@
+#1. Activation Functions
+
+#a) Leaky ReLU (fixes dying ReLU)
+leaky_relu = nn.LeakyReLU(negative_slope=0.01)
+x = torch.tensor([-1.0, 0.0, 1.0])
+print(leaky_relu(x))  # Allows small negative slope instead of zero
+
+#b) Softmax (multi-class output)
+softmax = nn.Softmax(dim=1)
+logits = torch.tensor([[1.0, 2.0, 3.0]])
+probs = softmax(logits)
+print(probs)  # Outputs probabilities summing to 1 across classes
+
+
+#2. Optimizers
+#SGD with Momentum
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+#RMSProp
+optimizer = optim.RMSprop(model.parameters(), lr=0.001)
+
+#3. Regularization
+#a) Dropout (randomly zero activations during training
+dropout = nn.Dropout(p=0.5)
+model = nn.Sequential(
+    nn.Linear(10, 20),
+    nn.ReLU(),
+    dropout,
+    nn.Linear(20, 1)
+)
+
+#b) Batch Normalization (normalizes layer input)
+
+bn = nn.BatchNorm1d(num_features=20)
+
+#4. Weight Initialization
+
+def xavier_init(m):
+    if isinstance(m, nn.Linear):
+        nn.init.xavier_uniform_(m.weight)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
+
+model.apply(xavier_init)
+
+#He Initialization (good for ReLU)
+
+def he_init(m):
+    if isinstance(m, nn.Linear):
+        nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
+
+model.apply(he_init)
+
+
+#5. Loss Functions
+#CrossEntropyLoss (multi-class classification)
+
+criterion = nn.CrossEntropyLoss()
+logits = torch.randn(3, 5)  # batch_size=3, num_classes=5
+targets = torch.tensor([1, 0, 4])  # class indices
+loss = criterion(logits, targets)
+print(loss.item())
+
+
+# MSELoss (regression)
+
+criterion = nn.MSELoss()
+outputs = torch.tensor([2.5, 0.0, 2.1])
+targets = torch.tensor([3.0, -0.5, 2.0])
+loss = criterion(outputs, targets)
+print(loss.item())
+
+#6. Gradient Clipping (prevent exploding gradients)
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+#7. Learning Rate Scheduler Examples
+#StepLR (decays LR every few epochs)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+for epoch in range(20):
+    train(...)
+    scheduler.step()
+
+#CosineAnnealingLRn
+
+scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
+
+
+
+#8. Batch vs Mini-batch Gradient Descent (DataLoader)
+#Use batch_size=1 for stochastic, batch_size=len(dataset) for batch, typical is mini-batch (32, 64):
+
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+
+#9. Gradient Checking (simplified numerical approximation for one param)
+
+def numerical_grad_check(model, loss_fn, x, y, param_name, epsilon=1e-5):
+    model.eval()
+    param = dict(model.named_parameters())[param_name]
+    param_data = param.data.clone()
+
+    param_grad_approx = torch.zeros_like(param_data)
+    for idx in range(param_data.numel()):
+        orig = param_data.view(-1)[idx].item()
+
+        # f(x + eps)
+        param_data.view(-1)[idx] = orig + epsilon
+        param.data = param_data
+        output_plus = loss_fn(model(x), y).item()
+
+        # f(x - eps)
+        param_data.view(-1)[idx] = orig - epsilon
+        param.data = param_data
+        output_minus = loss_fn(model(x), y).item()
+
+        # Numerical gradient approx
+        param_grad_approx.view(-1)[idx] = (output_plus - output_minus) / (2 * epsilon)
+
+        # Restore original value
+        param_data.view(-1)[idx] = orig
+
+    param.data = param_data
+    return param_grad_approx
+
+
+
+# 10. Backpropagation Through Time (BPTT) — for RNNs
+
+rnn = nn.RNN(input_size=10, hidden_size=20, num_layers=1)
+output, hn = rnn(input_seq)
+loss = criterion(output, target)
+loss.backward()  # PyTorch does BPTT automatically
+
+
+#Autoencoder Skeleton
+
+class Autoencoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(784, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 12),
+            nn.ReLU(),
+            nn.Linear(12, 3)  # bottleneck
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(3, 12),
+            nn.ReLU(),
+            nn.Linear(12, 64),
+            nn.ReLU(),
+            nn.Linear(64, 128),
+            nn.ReLU(),
+            nn.Linear(128, 784),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+

@@ -1,0 +1,103 @@
+1. Universal Approximation Theorem (Theory)
+Statement:
+A feedforward neural network with at least one hidden layer containing a finite number of neurons and a non-linear activation function can approximate any continuous function on a closed and bounded subset of ℝⁿ to any desired accuracy.
+
+Meaning:
+Neural networks are theoretically capable of representing very complex functions, but:
+
+It doesn’t say how many neurons you need.
+
+It doesn’t guarantee efficient training.
+
+Key takeaway:
+The power comes from depth + non-linearity, but practical performance depends on architecture, optimization, and data.
+
+2. Batch Normalization (Practical / Optimization)
+Purpose:
+Normalizes the input to each layer within a mini-batch so that it has zero mean and unit variance.
+
+Benefits:
+
+Stabilizes learning by reducing internal covariate shift (distribution changes during training).
+
+Allows higher learning rates.
+
+Acts like a regularizer (reduces overfitting).
+
+Mechanism:
+For each mini-batch:
+
+Subtract mean, divide by std.
+
+Apply learnable scale (γ) and shift (β) parameters.
+
+3. Xavier and He Initialization (Optimization / Training Stability)
+Goal: Prevent vanishing or exploding gradients by controlling the variance of neuron outputs.
+
+Xavier (Glorot) Initialization:
+
+For activations like tanh or sigmoid.
+
+Variance: Var(W) = 2 / (fan_in + fan_out)
+
+Balances forward and backward signal flow.
+
+He Initialization:
+
+For ReLU and variants.
+
+Variance: Var(W) = 2 / fan_in
+
+Keeps ReLU activations from dying by maintaining stronger initial signals.
+
+4. Weight Decay (Regularization)
+Idea: Add a penalty term to the loss function to discourage large weights.
+
+Common form: L2 regularization → Loss_total = Loss_original + λ * Σ(W²)
+
+Benefits:
+
+Reduces overfitting by keeping weights small.
+
+Encourages simpler models.
+
+Difference from Dropout: Dropout randomly turns off neurons; weight decay continuously penalizes large weights.
+
+5. Autoencoders (Representation Learning)
+Structure: Neural network trained to copy input → output (unsupervised).
+
+Encoder: Compresses input into a latent vector.
+
+Decoder: Reconstructs input from latent vector.
+
+Uses:
+
+Dimensionality reduction (like non-linear PCA).
+
+Denoising (remove noise from data).
+
+Pretraining for deep networks.
+
+Variants:
+
+Denoising Autoencoder.
+
+Variational Autoencoder (VAE) for generative modeling.
+
+6. Transfer Learning (Practical / Efficiency)
+Concept: Reuse a model trained on one task as a starting point for another related task.
+
+Why:
+
+Saves training time.
+
+Works well with limited data.
+
+Leverages knowledge from large datasets (e.g., ImageNet).
+
+Approaches:
+
+Feature extraction: Freeze most layers, retrain last few layers for the new task.
+
+Fine-tuning: Unfreeze some or all layers and train with a small learning rate.
+

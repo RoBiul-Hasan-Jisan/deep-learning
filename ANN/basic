@@ -9,7 +9,7 @@ them by corresponding weights, adds a bias, and then passes the result through a
 step function in the original version).
 
 Mathematically, the perceptron output 
-y=  f( i=1∑n wixi + b)
+y=  f( i=1∑n wi*xi + b)
 
 𝑥𝑖 are input features,
 𝑤𝑖 are weights,
