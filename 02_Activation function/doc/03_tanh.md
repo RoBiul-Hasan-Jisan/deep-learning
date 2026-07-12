@@ -36,9 +36,9 @@ $$
 
 The resulting output becomes the input to the next layer.
 
----
+
 ![alt text](image-3.png)
----
+
 ### Example
 
 Suppose

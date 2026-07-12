@@ -42,6 +42,7 @@ The output \(a\) becomes the input to the next layer.
 ---
 
 ![alt text](image-2.png)
+
 ### Example
 
 Suppose

@@ -36,9 +36,9 @@ The ReLU graph consists of:
 - A horizontal line at \(y=0\) for all negative inputs.
 - A straight line \(y=x\) for all positive inputs.
 
-```
+
    ![alt text](image.png)
-```
+
 
 ---
 

@@ -32,9 +32,9 @@ The graph consists of:
 - A line with slope **1** for positive inputs (same as ReLU).
 - A line with a small slope **α** for negative inputs.
 
-```
+
 ![alt text](image-1.png)
-```
+
 
 Notice:
 
